@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Control de Asistencia</title>
+  <style>
+    :root {
+      --bg: #f4f6f9;
+      --card: #ffffff;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --text: #1e293b;
+      --border: #cbd5e1;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      padding: 20px 15px;
+      min-height: 100vh;
+    }
+
+    .container {
+      background: var(--card);
+      width: 100%;
+      max-width: 440px;
+      padding: 25px 20px;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      height: fit-content;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 6px;
+      color: #0f172a;
+      font-size: 1.4rem;
+    }
+
+    p.subtitle {
+      text-align: center;
+      font-size: 0.88rem;
+      color: #64748b;
+      margin-bottom: 20px;
+    }
+
+    .section-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin: 16px 0 8px 0;
+      padding-bottom: 4px;
+      border-bottom: 2px solid #e2e8f0;
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 5px;
+      color: #334155;
+    }
+
+    select, input, textarea {
+      width: 100%;
+      padding: 11px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+      background-color: #fff;
+    }
+
+    select:focus, input:focus, textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .total-box {
+      background-color: #f1f5f9;
+      padding: 12px;
+      border-radius: 8px;
+      text-align: center;
+      margin: 18px 0;
+      border: 1px dashed var(--border);
+    }
+
+    .total-box span {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    button:hover {
+      background-color: var(--primary-hover);
+    }
+
+    .status-msg {
+      margin-top: 15px;
+      text-align: center;
+      font-size: 0.9rem;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>Registro de Asistencia</h2>
+    <p class="subtitle">Completa los datos del grupo</p>
+
+    <form id="attendanceForm">
+      
+      <!-- Selección de Grado -->
+      <div class="form-group">
+        <label for="grado">Grado y Sección</label>
+        <select id="grado" required>
+          <option value="" disabled selected>Selecciona una opción...</option>
+          
+          <optgroup label="1° Año General">
+            <option value="1° General A">1° General A</option>
+            <option value="1° General B">1° General B</option>
+            <option value="1° General C">1° General C</option>
+            <option value="1° General D">1° General D</option>
+          </optgroup>
+
+          <optgroup label="1° Año Contador">
+            <option value="1° Contador A">1° Contador A</option>
+            <option value="1° Contador B">1° Contador B</option>
+            <option value="1° Contador C">1° Contador C</option>
+          </optgroup>
+
+          <optgroup label="2° Año General">
+            <option value="2° General A">2° General A</option>
+            <option value="2° General B">2° General B</option>
+            <option value="2° General C">2° General C</option>
+          </optgroup>
+
+          <optgroup label="2° Año Contador">
+            <option value="2° Contador A">2° Contador A</option>
+            <option value="2° Contador B">2° Contador B</option>
+            <option value="2° Contador C">2° Contador C</option>
+          </optgroup>
+        </select>
+      </div>
+
+      <!-- Presentes -->
+      <div class="section-title">Alumnos Presentes</div>
+      <div class="grid-2">
+        <div class="form-group">
+          <label for="p_alumnos">Alumnos Presentes</label>
+          <input type="number" id="p_alumnos" min="0" placeholder="0">
+        </div>
+        <div class="form-group">
+          <label for="p_alumnas">Alumnas Presentes</label>
+          <input type="number" id="p_alumnas" min="0" placeholder="0">
+        </div>
+      </div>
+
+      <!-- Ausentes -->
+      <div class="section-title">Alumnos Ausentes</div>
+      <div class="form-group">
+        <label for="ausentes">Total de Ausentes</label>
+        <input type="number" id="ausentes" min="0" placeholder="0">
+      </div>
+
+      <!-- Total Calculado -->
+      <div class="total-box">
+        <label style="margin-bottom:2px; font-weight: normal;">Total de Matrícula:</label>
+        <span id="totalMatricula">0</span> estudiantes
+      </div>
+
+      <!-- Observaciones -->
+      <div class="form-group">
+        <label for="notas">Observaciones (Opcional)</label>
+        <textarea id="notas" rows="2" placeholder="Ej: Motivo de ausencias..."></textarea>
+      </div>
+
+      <!-- Botón de Enviar -->
+      <button type="submit" id="btnSubmit">Enviar Reporte</button>
+      <p id="statusMsg" class="status-msg"></p>
+    </form>
+  </div>
+
+  <script>
+    const pAlumnos = document.getElementById('p_alumnos');
+    const pAlumnas = document.getElementById('p_alumnas');
+    const ausentes = document.getElementById('ausentes');
+    const totalSpan = document.getElementById('totalMatricula');
+    const form = document.getElementById('attendanceForm');
+    const statusMsg = document.getElementById('statusMsg');
+
+    // Función para obtener valores numéricos limpios (si está vacío retorna 0)
+    function getVal(input) {
+      return parseInt(input.value) || 0;
+    }
+
+    // Función para calcular el total automático
+    function calcularTotal() {
+      const total = getVal(pAlumnos) + getVal(pAlumnas) + getVal(ausentes);
+      totalSpan.textContent = total;
+    }
+
+    [pAlumnos, pAlumnas, ausentes].forEach(input => {
+      input.addEventListener('input', calcularTotal);
+    });
+
+    // Envío del formulario
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      const valAlumnos = getVal(pAlumnos);
+      const valAlumnas = getVal(pAlumnas);
+
+      const data = {
+        grado: document.getElementById('grado').value,
+        alumnos_presentes: valAlumnos,
+        alumnas_presentes: valAlumnas,
+        total_presentes: valAlumnos + valAlumnas,
+        ausentes: getVal(ausentes),
+        total_matricula: totalSpan.textContent,
+        notas: document.getElementById('notas').value
+      };
+
+      console.log('Datos procesados:', data);
+      
+      statusMsg.style.display = 'block';
+      statusMsg.style.color = '#16a34a';
+      statusMsg.textContent = '¡Reporte registrado correctamente!';
+      
+      form.reset();
+      totalSpan.textContent = '0';
+    });
+  </script>
+</body>
+</html>
