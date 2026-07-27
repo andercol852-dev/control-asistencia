@@ -129,6 +129,11 @@
       background-color: var(--primary-hover);
     }
 
+    button:disabled {
+      background-color: #94a3b8;
+      cursor: not-allowed;
+    }
+
     .status-msg {
       margin-top: 15px;
       text-align: center;
@@ -223,13 +228,15 @@
     const totalSpan = document.getElementById('totalMatricula');
     const form = document.getElementById('attendanceForm');
     const statusMsg = document.getElementById('statusMsg');
+    const btnSubmit = document.getElementById('btnSubmit');
 
-    // Función para obtener valores numéricos limpios (si está vacío retorna 0)
+    // Link de Apps Script
+    const SCRIPT_URL = 'https://script.google.com/macros/library/d/1stLASriFIXJHJzW8KZPY9Hq0OTI0rQ14-dM0MisM_5MqSR6sTHPG9Wee/1';
+
     function getVal(input) {
       return parseInt(input.value) || 0;
     }
 
-    // Función para calcular el total automático
     function calcularTotal() {
       const total = getVal(pAlumnos) + getVal(pAlumnas) + getVal(ausentes);
       totalSpan.textContent = total;
@@ -242,7 +249,11 @@
     // Envío del formulario
     form.addEventListener('submit', (e) => {
       e.preventDefault();
-      
+
+      btnSubmit.disabled = true;
+      btnSubmit.textContent = 'Enviando...';
+      statusMsg.style.display = 'none';
+
       const valAlumnos = getVal(pAlumnos);
       const valAlumnas = getVal(pAlumnas);
 
@@ -256,14 +267,29 @@
         notas: document.getElementById('notas').value
       };
 
-      console.log('Datos procesados:', data);
-      
-      statusMsg.style.display = 'block';
-      statusMsg.style.color = '#16a34a';
-      statusMsg.textContent = '¡Reporte registrado correctamente!';
-      
-      form.reset();
-      totalSpan.textContent = '0';
+      fetch(SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      })
+      .then(() => {
+        statusMsg.style.display = 'block';
+        statusMsg.style.color = '#16a34a';
+        statusMsg.textContent = '¡Reporte registrado correctamente!';
+        form.reset();
+        totalSpan.textContent = '0';
+      })
+      .catch(error => {
+        statusMsg.style.display = 'block';
+        statusMsg.style.color = '#dc2626';
+        statusMsg.textContent = 'Error al enviar. Revisa la conexión.';
+        console.error('Error:', error);
+      })
+      .finally(() => {
+        btnSubmit.disabled = false;
+        btnSubmit.textContent = 'Enviar Reporte';
+      });
     });
   </script>
 </body>
