@@ -12,6 +12,7 @@
       --primary-hover: #1d4ed8;
       --text: #1e293b;
       --border: #cbd5e1;
+      --error: #dc2626;
     }
 
     * {
@@ -26,6 +27,7 @@
       color: var(--text);
       display: flex;
       justify-content: center;
+      align-items: center;
       padding: 20px 15px;
       min-height: 100vh;
     }
@@ -140,11 +142,44 @@
       font-size: 0.9rem;
       display: none;
     }
+
+    /* Estilos para la pantalla de login */
+    #loginScreen {
+      display: block;
+    }
+
+    #formScreen {
+      display: none;
+    }
+
+    .error-text {
+      color: var(--error);
+      font-size: 0.85rem;
+      margin-top: 5px;
+      display: none;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
 
-  <div class="container">
+  <!-- PANTALLA DE CONTRASEÑA -->
+  <div class="container" id="loginScreen">
+    <h2>Acceso Requerido</h2>
+    <p class="subtitle">Ingresa la clave para registrar la asistencia</p>
+
+    <form id="loginForm">
+      <div class="form-group">
+        <label for="passInput">Contraseña</label>
+        <input type="password" id="passInput" placeholder="••••••••" required>
+        <p id="loginError" class="error-text">Contraseña incorrecta. Inténtalo de nuevo.</p>
+      </div>
+      <button type="submit">Ingresar</button>
+    </form>
+  </div>
+
+  <!-- PANTALLA DEL FORMULARIO -->
+  <div class="container" id="formScreen">
     <h2>Registro de Asistencia</h2>
     <p class="subtitle">Completa los datos del grupo</p>
 
@@ -184,7 +219,7 @@
       </div>
 
       <!-- Presentes -->
-      <div class="section-title">Alumnos Presentes</div>
+      <div class="section-title">Estudiantes Presentes</div>
       <div class="grid-2">
         <div class="form-group">
           <label for="p_alumnos">Alumnos Presentes</label>
@@ -197,10 +232,16 @@
       </div>
 
       <!-- Ausentes -->
-      <div class="section-title">Alumnos Ausentes</div>
-      <div class="form-group">
-        <label for="ausentes">Total de Ausentes</label>
-        <input type="number" id="ausentes" min="0" placeholder="0">
+      <div class="section-title">Estudiantes Ausentes</div>
+      <div class="grid-2">
+        <div class="form-group">
+          <label for="a_alumnos">Alumnos Ausentes</label>
+          <input type="number" id="a_alumnos" min="0" placeholder="0">
+        </div>
+        <div class="form-group">
+          <label for="a_alumnas">Alumnas Ausentes</label>
+          <input type="number" id="a_alumnas" min="0" placeholder="0">
+        </div>
       </div>
 
       <!-- Total Calculado -->
@@ -209,10 +250,10 @@
         <span id="totalMatricula">0</span> estudiantes
       </div>
 
-      <!-- Observaciones -->
+      <!-- Motivo de Ausencia -->
       <div class="form-group">
-        <label for="notas">Observaciones (Opcional)</label>
-        <textarea id="notas" rows="2" placeholder="Ej: Motivo de ausencias..."></textarea>
+        <label for="motivo_ausencia">Motivo de la Ausencia (Opcional)</label>
+        <textarea id="motivo_ausencia" rows="2" placeholder="Ej: Cita médica, enfermedad, permiso de padre de familia..."></textarea>
       </div>
 
       <!-- Botón de Enviar -->
@@ -222,31 +263,54 @@
   </div>
 
   <script>
+    // === CONFIGURACIÓN ===
+    const CLAVE_CORRECTA = 'cantor2026'; // 🔑 Contraseña de acceso
+    const SCRIPT_URL = 'AQUI_TU_LINK_EXEC'; // Tu link de Apps Script que termina en /exec
+
+    // Elementos de Login
+    const loginScreen = document.getElementById('loginScreen');
+    const formScreen = document.getElementById('formScreen');
+    const loginForm = document.getElementById('loginForm');
+    const passInput = document.getElementById('passInput');
+    const loginError = document.getElementById('loginError');
+
+    // Validación de Contraseña
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (passInput.value === CLAVE_CORRECTA) {
+        loginScreen.style.display = 'none';
+        formScreen.style.display = 'block';
+      } else {
+        loginError.style.display = 'block';
+        passInput.value = '';
+      }
+    });
+
+    // Elementos del Formulario
     const pAlumnos = document.getElementById('p_alumnos');
     const pAlumnas = document.getElementById('p_alumnas');
-    const ausentes = document.getElementById('ausentes');
+    const aAlumnos = document.getElementById('a_alumnos');
+    const aAlumnas = document.getElementById('a_alumnas');
     const totalSpan = document.getElementById('totalMatricula');
     const form = document.getElementById('attendanceForm');
     const statusMsg = document.getElementById('statusMsg');
     const btnSubmit = document.getElementById('btnSubmit');
 
-    // Link de Apps Script
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyvgNDEsdqiGuPzFE9GArYmRdVijMlgmMoSa5GgLvKRAZM7nRVEQx4MHquKHQwirKst/exec';
-
     function getVal(input) {
       return parseInt(input.value) || 0;
     }
 
+    // Cálculo automático sumando los 4 valores
     function calcularTotal() {
-      const total = getVal(pAlumnos) + getVal(pAlumnas) + getVal(ausentes);
+      const total = getVal(pAlumnos) + getVal(pAlumnas) + getVal(aAlumnos) + getVal(aAlumnas);
       totalSpan.textContent = total;
     }
 
-    [pAlumnos, pAlumnas, ausentes].forEach(input => {
+    [pAlumnos, pAlumnas, aAlumnos, aAlumnas].forEach(input => {
       input.addEventListener('input', calcularTotal);
     });
 
-    // Envío del formulario
+    // Envío del Formulario
     form.addEventListener('submit', (e) => {
       e.preventDefault();
 
@@ -254,17 +318,21 @@
       btnSubmit.textContent = 'Enviando...';
       statusMsg.style.display = 'none';
 
-      const valAlumnos = getVal(pAlumnos);
-      const valAlumnas = getVal(pAlumnas);
+      const valPAlumnos = getVal(pAlumnos);
+      const valPAlumnas = getVal(pAlumnas);
+      const valAAlumnos = getVal(aAlumnos);
+      const valAAlumnas = getVal(aAlumnas);
 
       const data = {
         grado: document.getElementById('grado').value,
-        alumnos_presentes: valAlumnos,
-        alumnas_presentes: valAlumnas,
-        total_presentes: valAlumnos + valAlumnas,
-        ausentes: getVal(ausentes),
+        alumnos_presentes: valPAlumnos,
+        alumnas_presentes: valPAlumnas,
+        total_presentes: valPAlumnos + valPAlumnas,
+        alumnos_ausentes: valAAlumnos,
+        alumnas_ausentes: valAAlumnas,
+        total_ausentes: valAAlumnos + valAAlumnas,
         total_matricula: totalSpan.textContent,
-        notas: document.getElementById('notas').value
+        motivo_ausencia: document.getElementById('motivo_ausencia').value
       };
 
       fetch(SCRIPT_URL, {
