@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Control de Asistencia</title>
+  <title>Control de Asistencia + IA Robot</title>
   <style>
     :root {
       --bg: #f4f6f9;
@@ -13,6 +13,7 @@
       --text: #1e293b;
       --border: #cbd5e1;
       --error: #dc2626;
+      --ai-color: #8b5cf6;
     }
 
     * {
@@ -136,6 +137,32 @@
       cursor: not-allowed;
     }
 
+    /* ESTILOS DE LA SECCIÓN IA */
+    .ai-card {
+      background: #f5f3ff;
+      border: 1px solid #ddd6fe;
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .btn-ai {
+      background-color: var(--ai-color);
+      margin-bottom: 8px;
+    }
+
+    .btn-ai:hover {
+      background-color: #7c3aed;
+    }
+
+    .ai-status {
+      font-size: 0.82rem;
+      color: #6d28d9;
+      font-weight: 600;
+      margin-top: 6px;
+    }
+
     .status-msg {
       margin-top: 15px;
       text-align: center;
@@ -181,6 +208,12 @@
   <div class="container" id="formScreen">
     <h2>Registro de Asistencia</h2>
     <p class="subtitle">Completa los datos del grupo</p>
+
+    <!-- CONTROL DE IA Y VOZ -->
+    <div class="ai-card">
+      <button type="button" id="btnEscuchar" class="btn-ai">🎤 Hablar con el Robot</button>
+      <p id="aiStatus" class="ai-status">Presiona para hacer una pregunta o saludar</p>
+    </div>
 
     <form id="attendanceForm">
       
@@ -262,9 +295,12 @@
   </div>
 
   <script>
-    // === CONFIGURACIÓN ===
+    // === CONFIGURACIÓN DE APIS Y SERVICIOS ===
     const CLAVE_CORRECTA = 'cantor2026';
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxmhQcTP5-nKQKgSSTFvjuZaIkAHatHcFu4RJei2rUhdIzY8Km2ZRfnJpWKOKWqhQK4/exec';
+    
+    // REEMPLAZA ESTA CLAVE POR LA NUEVA QUE GENERES EN GOOGLE AI STUDIO
+    const GEMINI_API_KEY = 'NUEVA_GEMINI_API_KEY_AQUI'; 
 
     // Elementos de Login
     const loginScreen = document.getElementById('loginScreen');
@@ -279,11 +315,93 @@
       if (passInput.value === CLAVE_CORRECTA) {
         loginScreen.style.display = 'none';
         formScreen.style.display = 'block';
+        hablar("Acceso concedido. Listo para pasar asistencia.");
       } else {
         loginError.style.display = 'block';
         passInput.value = '';
       }
     });
+
+    // === SISTEMA DE IA Y RECONOCIMIENTO DE VOZ ===
+    const btnEscuchar = document.getElementById('btnEscuchar');
+    const aiStatus = document.getElementById('aiStatus');
+
+    // Módulo de Texto a Voz
+    function hablar(texto) {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel(); // Detener audios previos
+        const mensaje = new SpeechSynthesisUtterance(texto);
+        mensaje.lang = 'es-ES';
+        mensaje.rate = 1.0;
+        window.speechSynthesis.speak(mensaje);
+      }
+    }
+
+    // Módulo de Reconocimiento de Voz
+    const Reconocimiento = window.SpeechRecognition || window.webkitSpeechRecognition;
+    let oyente;
+
+    if (Reconocimiento) {
+      oyente = new Reconocimiento();
+      oyente.lang = 'es-ES';
+
+      oyente.onstart = () => {
+        aiStatus.textContent = "Escuchando... Habla ahora.";
+      };
+
+      oyente.onresult = (e) => {
+        const textoEscuchado = e.results[0][0].transcript;
+        aiStatus.textContent = `Dijiste: "${textoEscuchado}"`;
+        consultarGeminiIA(textoEscuchado);
+      };
+
+      oyente.onerror = () => {
+        aiStatus.textContent = "Error al escuchar. Inténtalo de nuevo.";
+      };
+
+      btnEscuchar.addEventListener('click', () => {
+        oyente.start();
+      });
+    } else {
+      btnEscuchar.style.display = 'none';
+      aiStatus.textContent = "Reconocimiento de voz no soportado en este navegador.";
+    }
+
+    // Consulta API de Gemini
+    async function consultarGeminiIA(pregunta) {
+      aiStatus.textContent = "Pensando respuesta...";
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+
+      try {
+        const respuesta = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{
+              parts: [{ text: `Eres un robot asistente escolar de paso de asistencia. Responde amable y brevemente en una sola frase a: ${pregunta}` }]
+            }]
+          })
+        });
+
+        const datos = await respuesta.json();
+        const textoRespuesta = datos.candidates[0].content.parts[0].text;
+        
+        aiStatus.textContent = textoRespuesta;
+        hablar(textoRespuesta);
+      } catch (err) {
+        aiStatus.textContent = "Error al conectar con la IA.";
+        console.error(err);
+      }
+    }
+
+    // === ENVIAR COMANDOS AL ROBOT MAKEBLOCK ===
+    function enviarAlRobot(comando) {
+      if (window.AndroidRobot) {
+        window.AndroidRobot.enviarComando(comando);
+      } else {
+        console.log("Comando enviado al Robot (Modo prueba):", comando);
+      }
+    }
 
     // Elementos del Formulario
     const pAlumnos = document.getElementById('p_alumnos');
@@ -344,6 +462,10 @@
           statusMsg.style.display = 'block';
           statusMsg.style.color = '#16a34a';
           statusMsg.textContent = '¡Reporte registrado correctamente!';
+          
+          hablar("Reporte registrado con éxito.");
+          enviarAlRobot('H'); // Manda orden 'H' (Saludar / Mover garra) al Makeblock
+
           form.reset();
           totalSpan.textContent = '0';
         } else {
@@ -354,6 +476,7 @@
         statusMsg.style.display = 'block';
         statusMsg.style.color = '#dc2626';
         statusMsg.textContent = 'Error al enviar. Inténtalo de nuevo.';
+        hablar("Hubo un error al enviar el reporte.");
         console.error('Error:', error);
       })
       .finally(() => {
