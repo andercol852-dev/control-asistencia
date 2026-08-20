@@ -1,731 +1,92 @@
 <!DOCTYPE html>
-
 <html lang="es">
-
 <head>
-
   <meta charset="UTF-8">
-
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>Control de Asistencia</title>
-
+  <title>Asistente IA - Pantalla Robot</title>
   <style>
-
-    :root {
-
-      --bg: #f4f6f9;
-
-      --card: #ffffff;
-
-      --primary: #2563eb;
-
-      --primary-hover: #1d4ed8;
-
-      --text: #1e293b;
-
-      --border: #cbd5e1;
-
-      --error: #dc2626;
-
-    }
-
-
-
-    * {
-
-      box-sizing: border-box;
-
-      margin: 0;
-
-      padding: 0;
-
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-
-    }
-
-
-
-    body {
-
-      background-color: var(--bg);
-
-      color: var(--text);
-
-      display: flex;
-
-      justify-content: center;
-
-      align-items: center;
-
-      padding: 20px 15px;
-
-      min-height: 100vh;
-
-    }
-
-
-
-    .container {
-
-      background: var(--card);
-
-      width: 100%;
-
-      max-width: 440px;
-
-      padding: 25px 20px;
-
-      border-radius: 16px;
-
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-
-      height: fit-content;
-
-    }
-
-
-
-    h2 {
-
-      text-align: center;
-
-      margin-bottom: 6px;
-
-      color: #0f172a;
-
-      font-size: 1.4rem;
-
-    }
-
-
-
-    p.subtitle {
-
-      text-align: center;
-
-      font-size: 0.88rem;
-
-      color: #64748b;
-
-      margin-bottom: 20px;
-
-    }
-
-
-
-    .section-title {
-
-      font-size: 0.9rem;
-
-      font-weight: 700;
-
-      color: #1e293b;
-
-      margin: 16px 0 8px 0;
-
-      padding-bottom: 4px;
-
-      border-bottom: 2px solid #e2e8f0;
-
-    }
-
-
-
-    .form-group {
-
-      margin-bottom: 14px;
-
-    }
-
-
-
-    label {
-
-      display: block;
-
-      font-size: 0.85rem;
-
-      font-weight: 600;
-
-      margin-bottom: 5px;
-
-      color: #334155;
-
-    }
-
-
-
-    select, input, textarea {
-
-      width: 100%;
-
-      padding: 11px;
-
-      border: 1px solid var(--border);
-
-      border-radius: 8px;
-
-      font-size: 0.95rem;
-
-      outline: none;
-
-      transition: border-color 0.2s;
-
-      background-color: #fff;
-
-    }
-
-
-
-    select:focus, input:focus, textarea:focus {
-
-      border-color: var(--primary);
-
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
-
-    }
-
-
-
-    .grid-2 {
-
-      display: grid;
-
-      grid-template-columns: 1fr 1fr;
-
-      gap: 10px;
-
-    }
-
-
-
-    .total-box {
-
-      background-color: #f1f5f9;
-
-      padding: 12px;
-
-      border-radius: 8px;
-
-      text-align: center;
-
-      margin: 18px 0;
-
-      border: 1px dashed var(--border);
-
-    }
-
-
-
-    .total-box span {
-
-      font-size: 1.2rem;
-
-      font-weight: 700;
-
-      color: var(--primary);
-
-    }
-
-
-
-    button {
-
-      width: 100%;
-
-      padding: 14px;
-
-      background-color: var(--primary);
-
-      color: white;
-
-      border: none;
-
-      border-radius: 8px;
-
-      font-size: 1rem;
-
-      font-weight: 600;
-
-      cursor: pointer;
-
-      transition: background-color 0.2s;
-
-    }
-
-
-
-    button:hover {
-
-      background-color: var(--primary-hover);
-
-    }
-
-
-
-    button:disabled {
-
-      background-color: #94a3b8;
-
-      cursor: not-allowed;
-
-    }
-
-
-
-    .status-msg {
-
-      margin-top: 15px;
-
-      text-align: center;
-
-      font-size: 0.9rem;
-
-      display: none;
-
-    }
-
-
-
-    #loginScreen {
-
-      display: block;
-
-    }
-
-
-
-    #formScreen {
-
-      display: none;
-
-    }
-
-
-
-    .error-text {
-
-      color: var(--error);
-
-      font-size: 0.85rem;
-
-      margin-top: 5px;
-
-      display: none;
-
-      text-align: center;
-
-    }
-
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+    body { background-color: #0f172a; color: #ffffff; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; position: relative; }
+    .avatar-container { display: flex; flex-direction: column; align-items: center; text-align: center; max-width: 90%; z-index: 1; }
+    .avatar-img { width: 200px; height: 200px; border-radius: 50%; border: 4px solid #38bdf8; box-shadow: 0 0 30px rgba(56, 189, 248, 0.4); object-fit: cover; transition: all 0.3s ease; }
+    .hablando { animation: pulso 0.6s infinite alternate; border-color: #4ade80; box-shadow: 0 0 35px rgba(74, 222, 128, 0.7); }
+    @keyframes pulso { from { transform: scale(1); } to { transform: scale(1.08); } }
+    .globo-texto { background: #1e293b; padding: 16px 22px; border-radius: 16px; max-width: 420px; margin-top: 20px; font-size: 1.1rem; border: 1px solid #334155; min-height: 70px; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 25px rgba(0,0,0,0.3); line-height: 1.4; }
+    .btn-hablar { background: #0284c7; color: #ffffff; border: none; padding: 14px 28px; border-radius: 30px; font-size: 1rem; font-weight: 600; cursor: pointer; margin-top: 20px; transition: background 0.2s, transform 0.1s; box-shadow: 0 4px 14px rgba(2, 132, 199, 0.4); }
+    .btn-hablar:hover { background: #0369a1; }
+    .btn-hablar:active { transform: scale(0.96); }
+    .qr-card { position: absolute; bottom: 24px; right: 24px; background: #ffffff; color: #0f172a; padding: 12px; border-radius: 16px; text-align: center; box-shadow: 0 8px 20px rgba(0,0,0,0.4); z-index: 2; }
+    .qr-card img { width: 120px; height: 120px; display: block; margin: 0 auto 8px auto; border-radius: 6px; }
+    .qr-card p { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.3px; line-height: 1.2; }
+    @media (max-width: 600px) { .avatar-img { width: 150px; height: 150px; } .qr-card { bottom: 12px; right: 12px; padding: 8px; } .qr-card img { width: 90px; height: 90px; } .qr-card p { font-size: 0.65rem; } }
   </style>
-
 </head>
-
 <body>
-
-
-
-  <!-- PANTALLA DE CONTRASEÑA -->
-
-  <div class="container" id="loginScreen">
-
-    <h2>Acceso Requerido</h2>
-
-    <p class="subtitle">Ingresa la clave para registrar la asistencia</p>
-
-
-
-    <form id="loginForm">
-
-      <div class="form-group">
-
-        <label for="passInput">Contraseña</label>
-
-        <input type="password" id="passInput" placeholder="••••••••" required>
-
-        <p id="loginError" class="error-text">Contraseña incorrecta. Inténtalo de nuevo.</p>
-
-      </div>
-
-      <button type="submit">Ingresar</button>
-
-    </form>
-
+  <div class="avatar-container">
+    <img id="avatar" class="avatar-img" src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOHp1ZHdyM3UxaTNzbTh0MHV1NmR1eXRqczh1ZnlwM2NxbnhpNmI4OCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3o7TKSjRrfIPjeiVyM/giphy.gif" alt="Avatar Robot">
+    <div id="globoTexto" class="globo-texto">¡Hola! Soy tu asistente. Presiona el botón para consultar.</div>
+    <button id="btnEscuchar" class="btn-hablar">🎤 Presiona para Hablar</button>
   </div>
-
-
-
-  <!-- PANTALLA DEL FORMULARIO -->
-
-  <div class="container" id="formScreen">
-
-    <h2>Registro de Asistencia</h2>
-
-    <p class="subtitle">Completa los datos del grupo</p>
-
-
-
-    <form id="attendanceForm">
-
-      
-
-      <!-- Selección de Grado -->
-
-      <div class="form-group">
-
-        <label for="grado">Grado y Sección</label>
-
-        <select id="grado" required>
-
-          <option value="" disabled selected>Selecciona una opción...</option>
-
-          
-
-          <optgroup label="1° Año General">
-
-            <option value="1° General A">1° General A</option>
-
-            <option value="1° General B">1° General B</option>
-
-            <option value="1° General C">1° General C</option>
-
-            <option value="1° General D">1° General D</option>
-
-          </optgroup>
-
-
-
-          <optgroup label="1° Año Contador">
-
-            <option value="1° Contador A">1° Contador A</option>
-
-            <option value="1° Contador B">1° Contador B</option>
-
-            <option value="1° Contador C">1° Contador C</option>
-
-          </optgroup>
-
-
-
-          <optgroup label="2° Año General">
-
-            <option value="2° General A">2° General A</option>
-
-            <option value="2° General B">2° General B</option>
-
-            <option value="2° General C">2° General C</option>
-
-          </optgroup>
-
-
-
-          <optgroup label="2° Año Contador">
-
-            <option value="2° Contador A">2° Contador A</option>
-
-            <option value="2° Contador B">2° Contador B</option>
-
-            <option value="2° Contador C">2° Contador C</option>
-
-          </optgroup>
-
-        </select>
-
-      </div>
-
-
-
-      <!-- Presentes -->
-
-      <div class="section-title">Estudiantes Presentes</div>
-
-      <div class="grid-2">
-
-        <div class="form-group">
-
-          <label for="p_alumnos">Alumnos Presentes</label>
-
-          <input type="number" id="p_alumnos" min="0" placeholder="0">
-
-        </div>
-
-        <div class="form-group">
-
-          <label for="p_alumnas">Alumnas Presentes</label>
-
-          <input type="number" id="p_alumnas" min="0" placeholder="0">
-
-        </div>
-
-      </div>
-
-
-
-      <!-- Ausentes -->
-
-      <div class="section-title">Estudiantes Ausentes</div>
-
-      <div class="grid-2">
-
-        <div class="form-group">
-
-          <label for="a_alumnos">Alumnos Ausentes</label>
-
-          <input type="number" id="a_alumnos" min="0" placeholder="0">
-
-        </div>
-
-        <div class="form-group">
-
-          <label for="a_alumnas">Alumnas Ausentes</label>
-
-          <input type="number" id="a_alumnas" min="0" placeholder="0">
-
-        </div>
-
-      </div>
-
-
-
-      <!-- Total Calculado -->
-
-      <div class="total-box">
-
-        <label style="margin-bottom:2px; font-weight: normal;">Total de Matrícula:</label>
-
-        <span id="totalMatricula">0</span> estudiantes
-
-      </div>
-
-
-
-      <!-- Motivo de Ausencia -->
-
-      <div class="form-group">
-
-        <label for="motivo_ausencia">Motivo de la Ausencia (Opcional)</label>
-
-        <textarea id="motivo_ausencia" rows="2" placeholder="Ej: Cita médica, enfermedad, permiso de padre de familia..."></textarea>
-
-      </div>
-
-
-
-      <!-- Botón de Enviar -->
-
-      <button type="submit" id="btnSubmit">Enviar Reporte</button>
-
-      <p id="statusMsg" class="status-msg"></p>
-
-    </form>
-
+  <div class="qr-card">
+    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://andercol852-dev.github.io/control-asistencia/" alt="QR Asistencia">
+    <p>Escanea para<br>REGISTRAR ASISTENCIA</p>
   </div>
-
-
-
   <script>
+    const GEMINI_API_KEY = "AQ.Ab8RN6LfXTZZjYvs3tNjepgjzlbjXEt7EPbo1kMgGkajlBXVBA";
+    const avatar = document.getElementById('avatar');
+    const globoTexto = document.getElementById('globoTexto');
+    const btnEscuchar = document.getElementById('btnEscuchar');
 
-    // === CONFIGURACIÓN ===
-
-    const CLAVE_CORRECTA = 'cantor2026';
-
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxmhQcTP5-nKQKgSSTFvjuZaIkAHatHcFu4RJei2rUhdIzY8Km2ZRfnJpWKOKWqhQK4/exec';
-
-
-
-    // Elementos de Login
-
-    const loginScreen = document.getElementById('loginScreen');
-
-    const formScreen = document.getElementById('formScreen');
-
-    const loginForm = document.getElementById('loginForm');
-
-    const passInput = document.getElementById('passInput');
-
-    const loginError = document.getElementById('loginError');
-
-
-
-    // Validación de Contraseña
-
-    loginForm.addEventListener('submit', (e) => {
-
-      e.preventDefault();
-
-      if (passInput.value === CLAVE_CORRECTA) {
-
-        loginScreen.style.display = 'none';
-
-        formScreen.style.display = 'block';
-
-      } else {
-
-        loginError.style.display = 'block';
-
-        passInput.value = '';
-
+    function hablar(texto) {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const mensaje = new SpeechSynthesisUtterance(texto);
+        mensaje.lang = 'es-ES';
+        mensaje.onstart = () => avatar.classList.add('hablando');
+        mensaje.onend = () => avatar.classList.remove('hablando');
+        mensaje.onerror = () => avatar.classList.remove('hablando');
+        window.speechSynthesis.speak(mensaje);
       }
-
-    });
-
-
-
-    // Elementos del Formulario
-
-    const pAlumnos = document.getElementById('p_alumnos');
-
-    const pAlumnas = document.getElementById('p_alumnas');
-
-    const aAlumnos = document.getElementById('a_alumnos');
-
-    const aAlumnas = document.getElementById('a_alumnas');
-
-    const totalSpan = document.getElementById('totalMatricula');
-
-    const form = document.getElementById('attendanceForm');
-
-    const statusMsg = document.getElementById('statusMsg');
-
-    const btnSubmit = document.getElementById('btnSubmit');
-
-
-
-    function getVal(input) {
-
-      return parseInt(input.value) || 0;
-
     }
 
-
-
-    function calcularTotal() {
-
-      const total = getVal(pAlumnos) + getVal(pAlumnas) + getVal(aAlumnos) + getVal(aAlumnas);
-
-      totalSpan.textContent = total;
-
-    }
-
-
-
-    [pAlumnos, pAlumnas, aAlumnos, aAlumnas].forEach(input => {
-
-      input.addEventListener('input', calcularTotal);
-
-    });
-
-
-
-    // Envío del Formulario
-
-    form.addEventListener('submit', (e) => {
-
-      e.preventDefault();
-
-
-
-      btnSubmit.disabled = true;
-
-      btnSubmit.textContent = 'Enviando...';
-
-      statusMsg.style.display = 'none';
-
-
-
-      const valPAlumnos = getVal(pAlumnos);
-
-      const valPAlumnas = getVal(pAlumnas);
-
-      const valAAlumnos = getVal(aAlumnos);
-
-      const valAAlumnas = getVal(aAlumnas);
-
-
-
-      const data = {
-
-        grado: document.getElementById('grado').value,
-
-        alumnos_presentes: valPAlumnos,
-
-        alumnas_presentes: valPAlumnas,
-
-        total_presentes: valPAlumnos + valPAlumnas,
-
-        alumnos_ausentes: valAAlumnos,
-
-        alumnas_ausentes: valAAlumnas,
-
-        total_ausentes: valAAlumnos + valAAlumnas,
-
-        total_matricula: totalSpan.textContent,
-
-        motivo_ausencia: document.getElementById('motivo_ausencia').value
-
+    const Reconocimiento = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (Reconocimiento) {
+      const oyente = new Reconocimiento();
+      oyente.lang = 'es-ES';
+      oyente.onstart = () => { globoTexto.textContent = "Te estoy escuchando..."; };
+      oyente.onresult = (e) => {
+        const pregunta = e.results[0][0].transcript;
+        globoTexto.textContent = `Pregunta: "${pregunta}"`;
+        consultarIA(pregunta);
       };
+      oyente.onerror = () => { globoTexto.textContent = "No pude escucharte bien. Intenta de nuevo."; };
+      btnEscuchar.addEventListener('click', () => { try { oyente.start(); } catch(e){} });
+    } else {
+      btnEscuchar.style.display = 'none';
+      globoTexto.textContent = "Usa Google Chrome para soporte de voz.";
+    }
 
-
-
-      fetch(SCRIPT_URL, {
-
-        method: 'POST',
-
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-
-        body: JSON.stringify(data)
-
-      })
-
-      .then(response => response.json())
-
-      .then(res => {
-
-        if (res.result === 'success') {
-
-          statusMsg.style.display = 'block';
-
-          statusMsg.style.color = '#16a34a';
-
-          statusMsg.textContent = '¡Reporte registrado correctamente!';
-
-          form.reset();
-
-          totalSpan.textContent = '0';
-
+    async function consultarIA(pregunta) {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+      globoTexto.textContent = "Pensando respuesta...";
+      try {
+        const respuesta = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ contents: [{ parts: [{ text: `Eres un asistente educativo en un robot escolar. Responde en español de forma muy breve (máximo 2 oraciones) a: ${pregunta}` }] }] })
+        });
+        const datos = await respuesta.json();
+        if (datos.candidates && datos.candidates[0].content.parts[0].text) {
+          const textoRespuesta = datos.candidates[0].content.parts[0].text;
+          globoTexto.textContent = textoRespuesta;
+          hablar(textoRespuesta);
         } else {
-
-          throw new Error(res.error || 'Error en el servidor');
-
+          globoTexto.textContent = "No pude generar una respuesta.";
         }
-
-      })
-
-      .catch(error => {
-
-        statusMsg.style.display = 'block';
-
-        statusMsg.style.color = '#dc2626';
-
-        statusMsg.textContent = 'Error al enviar. Inténtalo de nuevo.';
-
-        console.error('Error:', error);
-
-      })
-
-      .finally(() => {
-
-        btnSubmit.disabled = false;
-
-        btnSubmit.textContent = 'Enviar Reporte';
-
-      });
-
-    });
-
+      } catch (err) {
+        globoTexto.textContent = "Error de conexión con la IA.";
+      }
+    }
   </script>
-
 </body>
-
 </html>
