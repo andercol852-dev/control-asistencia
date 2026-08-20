@@ -1,731 +1,204 @@
 <!DOCTYPE html>
-
 <html lang="es">
-
 <head>
-
   <meta charset="UTF-8">
-
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>Control de Asistencia</title>
-
+  <title>Registro de Asistencia Escolar</title>
   <style>
-
-    :root {
-
-      --bg: #f4f6f9;
-
-      --card: #ffffff;
-
-      --primary: #2563eb;
-
-      --primary-hover: #1d4ed8;
-
-      --text: #1e293b;
-
-      --border: #cbd5e1;
-
-      --error: #dc2626;
-
-    }
-
-
-
     * {
-
       box-sizing: border-box;
-
       margin: 0;
-
       padding: 0;
-
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-
+      font-family: system-ui, -apple-system, sans-serif;
     }
-
-
 
     body {
-
-      background-color: var(--bg);
-
-      color: var(--text);
-
-      display: flex;
-
-      justify-content: center;
-
-      align-items: center;
-
-      padding: 20px 15px;
-
+      background-color: #0f172a;
+      color: #ffffff;
       min-height: 100vh;
-
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
     }
 
-
-
-    .container {
-
-      background: var(--card);
-
-      width: 100%;
-
-      max-width: 440px;
-
-      padding: 25px 20px;
-
+    .card {
+      background-color: #1e293b;
+      border: 1px solid #334155;
       border-radius: 16px;
-
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-
-      height: fit-content;
-
+      padding: 28px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
     }
-
-
 
     h2 {
-
       text-align: center;
-
-      margin-bottom: 6px;
-
-      color: #0f172a;
-
-      font-size: 1.4rem;
-
+      color: #38bdf8;
+      margin-bottom: 8px;
+      font-size: 1.5rem;
     }
 
-
-
-    p.subtitle {
-
+    p.sub {
       text-align: center;
-
-      font-size: 0.88rem;
-
-      color: #64748b;
-
-      margin-bottom: 20px;
-
+      color: #94a3b8;
+      font-size: 0.875rem;
+      margin-bottom: 24px;
     }
-
-
-
-    .section-title {
-
-      font-size: 0.9rem;
-
-      font-weight: 700;
-
-      color: #1e293b;
-
-      margin: 16px 0 8px 0;
-
-      padding-bottom: 4px;
-
-      border-bottom: 2px solid #e2e8f0;
-
-    }
-
-
 
     .form-group {
-
-      margin-bottom: 14px;
-
+      margin-bottom: 18px;
     }
-
-
 
     label {
-
       display: block;
-
-      font-size: 0.85rem;
-
+      font-size: 0.875rem;
       font-weight: 600;
-
-      margin-bottom: 5px;
-
-      color: #334155;
-
+      margin-bottom: 6px;
+      color: #cbd5e1;
     }
 
-
-
-    select, input, textarea {
-
+    input, select {
       width: 100%;
-
-      padding: 11px;
-
-      border: 1px solid var(--border);
-
-      border-radius: 8px;
-
-      font-size: 0.95rem;
-
-      outline: none;
-
-      transition: border-color 0.2s;
-
-      background-color: #fff;
-
-    }
-
-
-
-    select:focus, input:focus, textarea:focus {
-
-      border-color: var(--primary);
-
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
-
-    }
-
-
-
-    .grid-2 {
-
-      display: grid;
-
-      grid-template-columns: 1fr 1fr;
-
-      gap: 10px;
-
-    }
-
-
-
-    .total-box {
-
-      background-color: #f1f5f9;
-
       padding: 12px;
-
       border-radius: 8px;
-
-      text-align: center;
-
-      margin: 18px 0;
-
-      border: 1px dashed var(--border);
-
+      border: 1px solid #475569;
+      background-color: #0f172a;
+      color: #ffffff;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.2s;
     }
 
-
-
-    .total-box span {
-
-      font-size: 1.2rem;
-
-      font-weight: 700;
-
-      color: var(--primary);
-
+    input:focus, select:focus {
+      border-color: #38bdf8;
     }
-
-
 
     button {
-
       width: 100%;
-
       padding: 14px;
-
-      background-color: var(--primary);
-
-      color: white;
-
       border: none;
-
       border-radius: 8px;
-
+      background-color: #0284c7;
+      color: #ffffff;
       font-size: 1rem;
-
       font-weight: 600;
-
       cursor: pointer;
-
-      transition: background-color 0.2s;
-
+      margin-top: 10px;
+      transition: background-color 0.2s, transform 0.1s;
     }
-
-
 
     button:hover {
-
-      background-color: var(--primary-hover);
-
+      background-color: #0369a1;
     }
 
-
-
-    button:disabled {
-
-      background-color: #94a3b8;
-
-      cursor: not-allowed;
-
+    button:active {
+      transform: scale(0.98);
     }
 
-
-
-    .status-msg {
-
-      margin-top: 15px;
-
-      text-align: center;
-
+    #mensaje {
+      margin-top: 16px;
+      padding: 12px;
+      border-radius: 8px;
       font-size: 0.9rem;
-
-      display: none;
-
-    }
-
-
-
-    #loginScreen {
-
-      display: block;
-
-    }
-
-
-
-    #formScreen {
-
-      display: none;
-
-    }
-
-
-
-    .error-text {
-
-      color: var(--error);
-
-      font-size: 0.85rem;
-
-      margin-top: 5px;
-
-      display: none;
-
       text-align: center;
-
+      display: none;
     }
 
+    .exito {
+      background-color: rgba(34, 197, 94, 0.2);
+      color: #4ade80;
+      border: 1px solid #22c55e;
+    }
+
+    .error {
+      background-color: rgba(239, 68, 68, 0.2);
+      color: #f87171;
+      border: 1px solid #ef4444;
+    }
   </style>
-
 </head>
-
 <body>
 
+  <div class="card">
+    <h2>Control de Asistencia</h2>
+    <p class="sub">Ingresa tus datos para registrar la llegada</p>
 
-
-  <!-- PANTALLA DE CONTRASEÑA -->
-
-  <div class="container" id="loginScreen">
-
-    <h2>Acceso Requerido</h2>
-
-    <p class="subtitle">Ingresa la clave para registrar la asistencia</p>
-
-
-
-    <form id="loginForm">
-
+    <form id="formAsistencia">
       <div class="form-group">
-
-        <label for="passInput">Contraseña</label>
-
-        <input type="password" id="passInput" placeholder="••••••••" required>
-
-        <p id="loginError" class="error-text">Contraseña incorrecta. Inténtalo de nuevo.</p>
-
+        <label for="nombre">Nombre Completo</label>
+        <input type="text" id="nombre" placeholder="Ej. Juan Pérez" required>
       </div>
 
-      <button type="submit">Ingresar</button>
+      <div class="form-group">
+        <label for="nie">NIE / Código Estudiantil</label>
+        <input type="number" id="nie" placeholder="Ej. 1234567" required>
+      </div>
 
+      <div class="form-group">
+        <label for="clave">Clave de Confirmación</label>
+        <input type="password" id="clave" placeholder="Ingresa la clave del día" required>
+      </div>
+
+      <button type="submit" id="btnEnviar">Registrar Asistencia</button>
     </form>
 
+    <div id="mensaje"></div>
   </div>
-
-
-
-  <!-- PANTALLA DEL FORMULARIO -->
-
-  <div class="container" id="formScreen">
-
-    <h2>Registro de Asistencia</h2>
-
-    <p class="subtitle">Completa los datos del grupo</p>
-
-
-
-    <form id="attendanceForm">
-
-      
-
-      <!-- Selección de Grado -->
-
-      <div class="form-group">
-
-        <label for="grado">Grado y Sección</label>
-
-        <select id="grado" required>
-
-          <option value="" disabled selected>Selecciona una opción...</option>
-
-          
-
-          <optgroup label="1° Año General">
-
-            <option value="1° General A">1° General A</option>
-
-            <option value="1° General B">1° General B</option>
-
-            <option value="1° General C">1° General C</option>
-
-            <option value="1° General D">1° General D</option>
-
-          </optgroup>
-
-
-
-          <optgroup label="1° Año Contador">
-
-            <option value="1° Contador A">1° Contador A</option>
-
-            <option value="1° Contador B">1° Contador B</option>
-
-            <option value="1° Contador C">1° Contador C</option>
-
-          </optgroup>
-
-
-
-          <optgroup label="2° Año General">
-
-            <option value="2° General A">2° General A</option>
-
-            <option value="2° General B">2° General B</option>
-
-            <option value="2° General C">2° General C</option>
-
-          </optgroup>
-
-
-
-          <optgroup label="2° Año Contador">
-
-            <option value="2° Contador A">2° Contador A</option>
-
-            <option value="2° Contador B">2° Contador B</option>
-
-            <option value="2° Contador C">2° Contador C</option>
-
-          </optgroup>
-
-        </select>
-
-      </div>
-
-
-
-      <!-- Presentes -->
-
-      <div class="section-title">Estudiantes Presentes</div>
-
-      <div class="grid-2">
-
-        <div class="form-group">
-
-          <label for="p_alumnos">Alumnos Presentes</label>
-
-          <input type="number" id="p_alumnos" min="0" placeholder="0">
-
-        </div>
-
-        <div class="form-group">
-
-          <label for="p_alumnas">Alumnas Presentes</label>
-
-          <input type="number" id="p_alumnas" min="0" placeholder="0">
-
-        </div>
-
-      </div>
-
-
-
-      <!-- Ausentes -->
-
-      <div class="section-title">Estudiantes Ausentes</div>
-
-      <div class="grid-2">
-
-        <div class="form-group">
-
-          <label for="a_alumnos">Alumnos Ausentes</label>
-
-          <input type="number" id="a_alumnos" min="0" placeholder="0">
-
-        </div>
-
-        <div class="form-group">
-
-          <label for="a_alumnas">Alumnas Ausentes</label>
-
-          <input type="number" id="a_alumnas" min="0" placeholder="0">
-
-        </div>
-
-      </div>
-
-
-
-      <!-- Total Calculado -->
-
-      <div class="total-box">
-
-        <label style="margin-bottom:2px; font-weight: normal;">Total de Matrícula:</label>
-
-        <span id="totalMatricula">0</span> estudiantes
-
-      </div>
-
-
-
-      <!-- Motivo de Ausencia -->
-
-      <div class="form-group">
-
-        <label for="motivo_ausencia">Motivo de la Ausencia (Opcional)</label>
-
-        <textarea id="motivo_ausencia" rows="2" placeholder="Ej: Cita médica, enfermedad, permiso de padre de familia..."></textarea>
-
-      </div>
-
-
-
-      <!-- Botón de Enviar -->
-
-      <button type="submit" id="btnSubmit">Enviar Reporte</button>
-
-      <p id="statusMsg" class="status-msg"></p>
-
-    </form>
-
-  </div>
-
-
 
   <script>
+    const CLAVE_CORRECTA = "cantor2026";
+    // Si usas Google Apps Script para guardar en Drive, coloca tu URL aquí:
+    const SCRIPT_URL = "TU_URL_DE_GOOGLE_APPS_SCRIPT"; 
 
-    // === CONFIGURACIÓN ===
+    const formulario = document.getElementById('formAsistencia');
+    const mensajeDiv = document.getElementById('mensaje');
+    const btnEnviar = document.getElementById('btnEnviar');
 
-    const CLAVE_CORRECTA = 'cantor2026';
-
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxmhQcTP5-nKQKgSSTFvjuZaIkAHatHcFu4RJei2rUhdIzY8Km2ZRfnJpWKOKWqhQK4/exec';
-
-
-
-    // Elementos de Login
-
-    const loginScreen = document.getElementById('loginScreen');
-
-    const formScreen = document.getElementById('formScreen');
-
-    const loginForm = document.getElementById('loginForm');
-
-    const passInput = document.getElementById('passInput');
-
-    const loginError = document.getElementById('loginError');
-
-
-
-    // Validación de Contraseña
-
-    loginForm.addEventListener('submit', (e) => {
-
+    formulario.addEventListener('submit', async (e) => {
       e.preventDefault();
 
-      if (passInput.value === CLAVE_CORRECTA) {
+      const nombre = document.getElementById('nombre').value.trim();
+      const nie = document.getElementById('nie').value.trim();
+      const clave = document.getElementById('clave').value.trim();
 
-        loginScreen.style.display = 'none';
-
-        formScreen.style.display = 'block';
-
-      } else {
-
-        loginError.style.display = 'block';
-
-        passInput.value = '';
-
+      // Validación de clave
+      if (clave !== CLAVE_CORRECTA) {
+        mostrarMensaje("Clave incorrecta. Pide la clave al docente.", "error");
+        return;
       }
 
-    });
-
-
-
-    // Elementos del Formulario
-
-    const pAlumnos = document.getElementById('p_alumnos');
-
-    const pAlumnas = document.getElementById('p_alumnas');
-
-    const aAlumnos = document.getElementById('a_alumnos');
-
-    const aAlumnas = document.getElementById('a_alumnas');
-
-    const totalSpan = document.getElementById('totalMatricula');
-
-    const form = document.getElementById('attendanceForm');
-
-    const statusMsg = document.getElementById('statusMsg');
-
-    const btnSubmit = document.getElementById('btnSubmit');
-
-
-
-    function getVal(input) {
-
-      return parseInt(input.value) || 0;
-
-    }
-
-
-
-    function calcularTotal() {
-
-      const total = getVal(pAlumnos) + getVal(pAlumnas) + getVal(aAlumnos) + getVal(aAlumnas);
-
-      totalSpan.textContent = total;
-
-    }
-
-
-
-    [pAlumnos, pAlumnas, aAlumnos, aAlumnas].forEach(input => {
-
-      input.addEventListener('input', calcularTotal);
-
-    });
-
-
-
-    // Envío del Formulario
-
-    form.addEventListener('submit', (e) => {
-
-      e.preventDefault();
-
-
-
-      btnSubmit.disabled = true;
-
-      btnSubmit.textContent = 'Enviando...';
-
-      statusMsg.style.display = 'none';
-
-
-
-      const valPAlumnos = getVal(pAlumnos);
-
-      const valPAlumnas = getVal(pAlumnas);
-
-      const valAAlumnos = getVal(aAlumnos);
-
-      const valAAlumnas = getVal(aAlumnas);
-
-
-
-      const data = {
-
-        grado: document.getElementById('grado').value,
-
-        alumnos_presentes: valPAlumnos,
-
-        alumnas_presentes: valPAlumnas,
-
-        total_presentes: valPAlumnos + valPAlumnas,
-
-        alumnos_ausentes: valAAlumnos,
-
-        alumnas_ausentes: valAAlumnas,
-
-        total_ausentes: valAAlumnos + valAAlumnas,
-
-        total_matricula: totalSpan.textContent,
-
-        motivo_ausencia: document.getElementById('motivo_ausencia').value
-
-      };
-
-
-
-      fetch(SCRIPT_URL, {
-
-        method: 'POST',
-
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-
-        body: JSON.stringify(data)
-
-      })
-
-      .then(response => response.json())
-
-      .then(res => {
-
-        if (res.result === 'success') {
-
-          statusMsg.style.display = 'block';
-
-          statusMsg.style.color = '#16a34a';
-
-          statusMsg.textContent = '¡Reporte registrado correctamente!';
-
-          form.reset();
-
-          totalSpan.textContent = '0';
-
-        } else {
-
-          throw new Error(res.error || 'Error en el servidor');
-
+      btnEnviar.disabled = true;
+      btnEnviar.textContent = "Guardando...";
+
+      const fechaHora = new Date().toLocaleString("es-SV", { timeZone: "America/El_Salvador" });
+
+      try {
+        if (SCRIPT_URL !== "TU_URL_DE_GOOGLE_APPS_SCRIPT") {
+          await fetch(SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ nombre, nie, fechaHora })
+          });
         }
 
-      })
-
-      .catch(error => {
-
-        statusMsg.style.display = 'block';
-
-        statusMsg.style.color = '#dc2626';
-
-        statusMsg.textContent = 'Error al enviar. Inténtalo de nuevo.';
-
-        console.error('Error:', error);
-
-      })
-
-      .finally(() => {
-
-        btnSubmit.disabled = false;
-
-        btnSubmit.textContent = 'Enviar Reporte';
-
-      });
-
+        mostrarMensaje(`¡Asistencia registrada con éxito! (${fechaHora})`, "exito");
+        formulario.reset();
+      } catch (err) {
+        mostrarMensaje("Ocurrió un error al guardar. Inténtalo de nuevo.", "error");
+        console.error(err);
+      } finally {
+        btnEnviar.disabled = false;
+        btnEnviar.textContent = "Registrar Asistencia";
+      }
     });
 
+    function mostrarMensaje(texto, tipo) {
+      mensajeDiv.textContent = texto;
+      mensajeDiv.className = tipo;
+      mensajeDiv.style.display = "block";
+    }
   </script>
-
 </body>
-
 </html>
